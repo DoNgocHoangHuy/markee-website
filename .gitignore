@@ -53,6 +53,7 @@ Thumbs.db
 .env
 .env.*
 *.env
+DEPLOY-NOVALINK.md
 
 # ==========================================================
 # Database

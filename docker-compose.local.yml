@@ -1,0 +1,51 @@
+services:
+  db:
+    image: mariadb:10.6
+    container_name: novalink-local-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: novalink
+      MYSQL_USER: novalink
+      MYSQL_PASSWORD: novalink
+    volumes:
+      - novalink_db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+  wordpress:
+    image: wordpress:php8.2-apache
+    container_name: novalink-local-wp
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: novalink
+      WORDPRESS_DB_USER: novalink
+      WORDPRESS_DB_PASSWORD: novalink
+      WORDPRESS_DEBUG: 1
+    volumes:
+      - novalink_wp_data:/var/www/html
+      - ./app/public/wp-content:/var/www/html/wp-content
+    ports:
+      - "8088:80"
+
+  wpcli:
+    image: wordpress:cli-php8.2
+    depends_on:
+      - db
+      - wordpress
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: novalink
+      WORDPRESS_DB_USER: novalink
+      WORDPRESS_DB_PASSWORD: novalink
+    volumes:
+      - novalink_wp_data:/var/www/html
+      - ./app/public/wp-content:/var/www/html/wp-content
+    entrypoint: ["tail", "-f", "/dev/null"]
+
+volumes:
+  novalink_db_data:
+  novalink_wp_data:
