@@ -531,6 +531,78 @@ p { margin: 0; line-height: 1.7; }
 .price-tag-lg { font-size: 26px; font-weight: 800; color: var(--red); margin-bottom: 16px; }
 .lead-desc { font-size: 15px; color: var(--ink-soft); margin-bottom: 24px; }
 
+/* ============ SERVICE CATALOG GRID (9 dich vu) ============ */
+.catalog-title {
+  font-size: 24px; font-weight: 800; margin-bottom: 30px; text-align: center;
+}
+.service-catalog-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-bottom: 56px;
+}
+.service-catalog-card {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius-md); padding: 26px;
+}
+.service-catalog-card .icon-box {
+  width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--red);
+  background: rgba(37,99,235,.06); color: var(--red);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+}
+.service-catalog-card .icon-box svg { width: 20px; height: 20px; }
+.service-catalog-card h3 { font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+.service-catalog-card p { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 20px; min-height: 60px; }
+.btn-detail {
+  width: 100%; justify-content: center; border: 1.5px solid var(--line); border-radius: 10px;
+  padding: 11px; font-weight: 700; font-size: 13.5px; color: var(--ink); background: #fff;
+  display: flex; align-items: center; gap: 6px; transition: border-color .15s ease, color .15s ease;
+}
+.btn-detail:hover { border-color: var(--red); color: var(--red); }
+
+/* ============ SERVICE DETAIL PAGE (single service) ============ */
+.service-detail-hero {
+  text-align: center; padding: 64px 0 46px; background: var(--bg-light);
+}
+.service-detail-hero .eyebrow {
+  display: inline-block; font-size: 12.5px; font-weight: 700; letter-spacing: .08em;
+  color: var(--red); background: rgba(37,99,235,.08); border: 1px solid rgba(37,99,235,.3);
+  padding: 6px 14px; border-radius: 999px; margin-bottom: 18px; text-transform: uppercase;
+}
+.service-detail-hero h1 {
+  font-size: 32px; font-weight: 800; max-width: 760px; margin: 0 auto 16px; line-height: 1.35;
+}
+.service-detail-hero h1 .accent { color: var(--red); }
+.service-detail-hero p.sub {
+  color: var(--ink-soft); max-width: 620px; margin: 0 auto 28px; font-size: 15px;
+}
+.meta-row {
+  display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 40px;
+}
+.rating-pill {
+  display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line);
+  border-radius: 999px; padding: 9px 16px; font-size: 13px; font-weight: 700; color: var(--ink); background: #fff;
+}
+.rating-pill .stars { color: var(--amber); letter-spacing: 1px; }
+.service-detail-hero .hero-img {
+  border-radius: var(--radius-lg); overflow: hidden; max-width: 980px; margin: 0 auto;
+  box-shadow: var(--shadow-card); background: var(--navy-700);
+}
+.service-detail-hero .hero-img img { width: 100%; display: block; }
+
+.service-detail-body { max-width: 800px; margin: 0 auto; padding: 60px 24px; }
+.service-detail-body .entry-content { font-size: 15.5px; color: var(--ink); }
+.service-detail-body .entry-content p { color: var(--ink-soft); margin-bottom: 18px; }
+.service-detail-body .entry-content h2 { font-size: 22px; font-weight: 800; margin: 34px 0 14px; }
+.service-detail-body .entry-content ul { margin: 0 0 20px; padding-left: 20px; list-style: disc; color: var(--ink-soft); }
+.service-detail-body .entry-content li { margin-bottom: 8px; }
+.service-detail-body .entry-content img { border-radius: var(--radius-md); margin: 20px 0; }
+
+@media (max-width: 980px) {
+  .service-catalog-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 600px) {
+  .service-catalog-grid { grid-template-columns: 1fr; }
+  .service-detail-hero h1 { font-size: 25px; }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
   .main-nav { display: none; }
