@@ -22,9 +22,9 @@
           'fallback_cb'    => function() {
               $home_class    = is_front_page() ? 'active' : '';
               $blog_class    = is_home() ? 'active' : '';
+              $is_service    = is_page('dich-vu') || get_page_template_slug() === 'page-chi-tiet-dich-vu.php';
               echo '<a href="' . esc_url( home_url( '/' ) ) . '" class="' . $home_class . '">Trang chủ</a>';
-              echo '<a href="' . esc_url( home_url( '/dich-vu/' ) ) . '" class="' . ( is_page('dich-vu') ? 'active' : '' ) . '">Dịch vụ</a>';
-              echo '<a href="' . esc_url( get_post_type_archive_link( 'san_pham' ) ) . '" class="' . ( ( is_post_type_archive( 'san_pham' ) || is_singular( 'san_pham' ) || is_tax( 'danh_muc_sp' ) ) ? 'active' : '' ) . '">Sản phẩm</a>';
+              echo '<a href="' . esc_url( home_url( '/dich-vu/' ) ) . '" class="' . ( $is_service ? 'active' : '' ) . '">Dịch vụ</a>';
               echo '<a href="' . esc_url( home_url( '/lien-he/' ) ) . '" class="' . ( is_page('lien-he') ? 'active' : '' ) . '">Liên hệ</a>';
               echo '<a href="' . esc_url( get_permalink( get_option('page_for_posts') ) ) . '" class="' . $blog_class . '">Blog</a>';
           },

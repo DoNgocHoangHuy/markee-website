@@ -13,7 +13,6 @@
         <ul>
           <li><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Về Novalink</a></li>
           <li><a href="<?php echo esc_url( home_url( '/dich-vu/' ) ); ?>">Dịch vụ</a></li>
-          <li><a href="<?php echo esc_url( get_post_type_archive_link( 'san_pham' ) ); ?>">Sản phẩm</a></li>
           <li><a href="<?php echo esc_url( get_permalink( get_option('page_for_posts') ) ); ?>">Blog</a></li>
         </ul>
       </div>

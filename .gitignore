@@ -63,3 +63,5 @@ DEPLOY-NOVALINK.md
 *.sql.gz
 *.sqlite
 *.sqlite3
+
+app/public/wp-content/uploads/

@@ -492,45 +492,6 @@ p { margin: 0; line-height: 1.7; }
 .single-post-wrap .entry-content h2 { font-size: 22px; margin: 30px 0 14px; }
 .single-post-wrap .entry-content img { border-radius: var(--radius-md); margin: 20px 0; }
 
-/* ============ PRODUCTS (Sản phẩm) ============ */
-.category-tabs { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 36px; }
-.category-tabs a {
-  padding: 9px 20px; border-radius: 999px; border: 1.5px solid var(--line);
-  font-size: 13.5px; font-weight: 600; color: var(--ink-soft); background: var(--white);
-}
-.category-tabs a:hover, .category-tabs a.active { background: var(--red); border-color: var(--red); color: #fff; }
-
-.products-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
-.product-card {
-  background: var(--white); border: 1px solid var(--line);
-  border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card);
-}
-.product-card .thumb { aspect-ratio: 4/3; overflow: hidden; position: relative; background: var(--navy-700); }
-.product-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
-.product-card .tag, .product-card .badge-featured {
-  position: absolute; top: 12px; left: 12px; font-size: 11px; font-weight: 700;
-  padding: 4px 10px; border-radius: 999px; text-transform: uppercase; color: #fff;
-}
-.product-card .tag { background: var(--navy-800); }
-.product-card .badge-featured { background: var(--amber); color: var(--navy-900); }
-.product-card .body { padding: 18px; }
-.product-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-.product-card p.excerpt { font-size: 13px; color: var(--ink-soft); margin-bottom: 14px; min-height: 40px; }
-.product-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.product-card .link { font-size: 12.5px; font-weight: 700; color: var(--red); }
-.price-tag { font-size: 14px; font-weight: 800; color: var(--red); }
-
-.product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-.product-detail-media { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-card); background: var(--navy-700); }
-.product-detail-media img { width: 100%; }
-.tag-static {
-  display: inline-block; background: rgba(37,99,235,.12); color: var(--red);
-  font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px;
-  text-transform: uppercase; margin-bottom: 14px;
-}
-.price-tag-lg { font-size: 26px; font-weight: 800; color: var(--red); margin-bottom: 16px; }
-.lead-desc { font-size: 15px; color: var(--ink-soft); margin-bottom: 24px; }
-
 /* ============ SERVICE CATALOG GRID (9 dich vu) ============ */
 .catalog-title {
   font-size: 24px; font-weight: 800; margin-bottom: 30px; text-align: center;
@@ -603,17 +564,95 @@ p { margin: 0; line-height: 1.7; }
   .service-detail-hero h1 { font-size: 25px; }
 }
 
+/* ============ SẢN PHẨM: Filter tabs ============ */
+.filter-tabs {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 36px;
+}
+.filter-tab {
+  padding: 10px 20px; border-radius: 999px; font-size: 13.5px; font-weight: 700;
+  background: #fff; border: 1.5px solid var(--line); color: var(--ink-soft);
+  transition: all .15s ease;
+}
+.filter-tab:hover { border-color: var(--red); color: var(--red); }
+.filter-tab.active { background: var(--red); border-color: var(--red); color: #fff; }
+
+/* ============ SẢN PHẨM: Catalog listing ============ */
+.product-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+}
+.product-card {
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-md);
+  overflow: hidden; box-shadow: var(--shadow-card);
+}
+.product-card .thumb { aspect-ratio: 16/11; overflow: hidden; background: var(--navy-700); position: relative; }
+.product-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.product-card .badge {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .02em;
+  border: 1px solid; padding: 4px 10px; border-radius: 999px; text-transform: uppercase;
+}
+.product-card .body { padding: 18px; }
+.product-card h3 { font-size: 15.5px; font-weight: 800; margin-bottom: 8px; line-height: 1.35; }
+.product-card p.excerpt { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; min-height: 40px; }
+.product-card .card-bottom {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding-top: 14px; border-top: 1px solid var(--line);
+}
+.product-card .price { font-size: 13px; font-weight: 800; color: var(--red); }
+.product-card .link-detail { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); white-space: nowrap; }
+.product-card .link-detail:hover { color: var(--red); }
+
+/* ============ SẢN PHẨM: Detail page ============ */
+.product-hero {
+  background: linear-gradient(180deg, var(--navy-800), var(--navy-900));
+  color: #fff; padding: 46px 0 44px; text-align: center;
+}
+.product-hero .breadcrumb { font-size: 13px; color: rgba(255,255,255,.55); margin-bottom: 12px; }
+.product-hero .breadcrumb a { color: rgba(255,255,255,.75); }
+.product-hero h1 { font-size: 28px; font-weight: 800; }
+
+.product-detail-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+  padding: 50px 0;
+}
+.product-detail-grid .p-thumb {
+  border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-card);
+  background: var(--navy-700); aspect-ratio: 4/3.2;
+}
+.product-detail-grid .p-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.product-detail-grid .p-info .badge {
+  display: inline-block; font-size: 12px; font-weight: 800; border: 1px solid;
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 14px; text-transform: uppercase;
+}
+.product-detail-grid .p-info .price { font-size: 26px; font-weight: 800; color: var(--red); margin-bottom: 14px; }
+.product-detail-grid .p-info p.desc { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 22px; }
+
+.product-body { max-width: 900px; margin: 0 auto; padding: 10px 24px 60px; }
+.product-body .entry-content { font-size: 15px; color: var(--ink); }
+.product-body .entry-content p { color: var(--ink-soft); margin-bottom: 16px; }
+.product-body .entry-content h2 { font-size: 20px; font-weight: 800; margin: 28px 0 12px; }
+.product-body .entry-content ul { margin: 0 0 18px; padding-left: 20px; list-style: disc; color: var(--ink-soft); }
+.product-body .entry-content li { margin-bottom: 7px; }
+
+@media (max-width: 980px) {
+  .product-grid { grid-template-columns: repeat(2,1fr); }
+  .product-detail-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .product-grid { grid-template-columns: 1fr; }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
   .main-nav { display: none; }
   .home-hero .container, .intro-split, .contact-grid, .featured-post,
-  .services-cta, .blog-layout, .product-detail { grid-template-columns: 1fr; }
+  .services-cta, .blog-layout { grid-template-columns: 1fr; }
   .card-grid-3, .posts-grid-3, .posts-grid-2, .stats-row, .process-row,
-  .service-panel, .form-row, .products-grid { grid-template-columns: repeat(2,1fr); }
+  .service-panel, .form-row { grid-template-columns: repeat(2,1fr); }
   .process-row { grid-template-columns: repeat(3,1fr); }
 }
 @media (max-width: 600px) {
   .card-grid-3, .posts-grid-3, .posts-grid-2, .stats-row,
-  .service-panel, .form-row, .process-row, .products-grid { grid-template-columns: 1fr; }
+  .service-panel, .form-row, .process-row { grid-template-columns: 1fr; }
   .home-hero h1 { font-size: 30px; }
 }

@@ -23,27 +23,55 @@ function novalink_enqueue_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'novalink_enqueue_assets' );
 
+// Excerpt length for blog cards
+function novalink_excerpt_length( $length ) {
+    return 20;
+}
+add_filter( 'excerpt_length', 'novalink_excerpt_length' );
+
+// Register Blog categories used on Home (Marketing / Cong nghe & Media / Tin tuc tong hop)
+function novalink_register_default_categories() {
+    $cats = array( 'Marketing', 'Công nghệ & Media', 'Tin tức tổng hợp' );
+    foreach ( $cats as $cat ) {
+        if ( ! term_exists( $cat, 'category' ) ) {
+            wp_insert_term( $cat, 'category' );
+        }
+    }
+}
+add_action( 'after_switch_theme', 'novalink_register_default_categories' );
+
+
+/* =========================================================================
+   SEO FIXES — theo báo cáo seocheck.py (dòng LUU / THIEU cần sửa)
+   ========================================================================= */
+
 // ---------------------------------------------------------------
-// FIX: Thẻ Canonical đầy đủ cho MỌI loại trang
-// WordPress mặc định (rel_canonical) chỉ xử lý trang đơn (is_singular),
-// KHÔNG tự thêm canonical cho: trang category, trang Blog (posts page),
-// trang tag, trang tìm kiếm... => gây thiếu thẻ canonical, ảnh hưởng SEO.
+// [SỬA MỤC 11 - LUU] Ngôn ngữ HTML: ép về "vi" vì site tiếng Việt
+// WordPress mặc định lấy theo Site Language (đang là English -> en-US)
 // ---------------------------------------------------------------
-remove_action( 'wp_head', 'rel_canonical' );
-add_action( 'wp_head', 'novalink_canonical_tag', 1 );
-function novalink_canonical_tag() {
+add_filter( 'language_attributes', function( $output ) {
+    if ( strpos( $output, 'lang=' ) !== false ) {
+        $output = preg_replace( '/lang="[^"]*"/', 'lang="vi"', $output );
+    } else {
+        $output .= ' lang="vi"';
+    }
+    return $output;
+} );
+
+// ---------------------------------------------------------------
+// Hàm dùng chung: tính URL chuẩn (canonical) của trang hiện tại
+// Tách riêng để canonical + Open Graph + Twitter Card đều dùng chung 1 URL
+// ---------------------------------------------------------------
+function novalink_get_canonical_url() {
     $url = '';
 
     if ( is_front_page() ) {
-        // Trang chủ (static front page hoặc mặc định)
         $url = home_url( '/' );
 
     } elseif ( is_singular() ) {
-        // Trang / Bài viết đơn (Home, Dịch vụ, Liên hệ, single post...)
         $url = get_permalink();
 
     } elseif ( is_home() ) {
-        // Trang Blog (Posts page) - kể cả các trang phân trang /page/2/
         $posts_page_id = get_option( 'page_for_posts' );
         $url = $posts_page_id ? get_permalink( $posts_page_id ) : home_url( '/' );
         $paged = get_query_var( 'paged' );
@@ -52,7 +80,6 @@ function novalink_canonical_tag() {
         }
 
     } elseif ( is_category() ) {
-        // Trang chuyên mục blog (vd: /category/marketing/)
         $url = get_category_link( get_queried_object_id() );
         $paged = get_query_var( 'paged' );
         if ( $paged && $paged > 1 ) {
@@ -72,157 +99,109 @@ function novalink_canonical_tag() {
         $url = get_permalink( get_queried_object_id() );
 
     } else {
-        // Fallback an toàn: dùng URL hiện tại
         $url = home_url( add_query_arg( null, null ) );
     }
 
+    return $url;
+}
+
+// ---------------------------------------------------------------
+// [ĐÃ ĐẠT - giữ nguyên] Thẻ Canonical cho mọi loại trang
+// ---------------------------------------------------------------
+remove_action( 'wp_head', 'rel_canonical' );
+add_action( 'wp_head', 'novalink_canonical_tag', 1 );
+function novalink_canonical_tag() {
+    $url = novalink_get_canonical_url();
     if ( $url ) {
         echo '<link rel="canonical" href="' . esc_url( $url ) . '" />' . "\n";
     }
 }
 
-// Excerpt length for blog cards
-function novalink_excerpt_length( $length ) {
-    return 20;
-}
-add_filter( 'excerpt_length', 'novalink_excerpt_length' );
+// ---------------------------------------------------------------
+// [SỬA MỤC 8a - LUU] Meta Title: trang chủ trước đây chỉ ra "Novalink"
+// (8 ký tự, quá ngắn) -> đặt tiêu đề mô tả đầy đủ hơn cho trang chủ.
+// Các trang khác vẫn dùng chuẩn WordPress: "{Tên trang} - Novalink"
+// ---------------------------------------------------------------
+add_filter( 'pre_get_document_title', function( $title ) {
+    if ( is_front_page() ) {
+        return 'Novalink - Đối tác Marketing, Công nghệ & Media doanh nghiệp';
+    }
+    return $title;
+} );
 
-// Register Blog categories used on Home (Marketing / Cong nghe & Media / Tin tuc tong hop)
-function novalink_register_default_categories() {
-    $cats = array( 'Marketing', 'Công nghệ & Media', 'Tin tức tổng hợp' );
-    foreach ( $cats as $cat ) {
-        if ( ! term_exists( $cat, 'category' ) ) {
-            wp_insert_term( $cat, 'category' );
+// ---------------------------------------------------------------
+// Hàm dùng chung: tính Meta Description theo từng loại trang
+// ---------------------------------------------------------------
+function novalink_get_meta_description() {
+    if ( is_front_page() ) {
+        return 'Novalink là đối tác chiến lược Marketing, Công nghệ & Media cho doanh nghiệp Việt Nam — SEO, quảng cáo, phát triển web/app và sản xuất nội dung sáng tạo.';
+    }
+
+    if ( is_singular() ) {
+        global $post;
+        if ( has_excerpt( $post ) ) {
+            return wp_strip_all_tags( get_the_excerpt( $post ) );
         }
+        $content = wp_strip_all_tags( strip_shortcodes( get_post_field( 'post_content', $post ) ) );
+        $trimmed = wp_trim_words( $content, 30, '...' );
+        return $trimmed ? $trimmed : get_bloginfo( 'name' ) . ' - Đối tác chiến lược Marketing, Công nghệ & Media.';
     }
+
+    if ( is_category() || is_tag() ) {
+        $term = get_queried_object();
+        if ( ! empty( $term->description ) ) {
+            return wp_strip_all_tags( $term->description );
+        }
+        return 'Tổng hợp bài viết thuộc chuyên mục ' . $term->name . ' từ Novalink.';
+    }
+
+    if ( is_home() ) {
+        return 'Cập nhật tin tức, kiến thức Marketing, Công nghệ & Media mới nhất từ đội ngũ Novalink.';
+    }
+
+    if ( is_search() ) {
+        return 'Kết quả tìm kiếm cho "' . get_search_query() . '" trên Novalink.';
+    }
+
+    $tagline = get_bloginfo( 'description' );
+    return $tagline ? $tagline : 'Novalink - Đối tác chiến lược Marketing, Công nghệ & Media.';
 }
-add_action( 'after_switch_theme', 'novalink_register_default_categories' );
 
 // ---------------------------------------------------------------
-// CPT: Sản phẩm — cho phép admin thêm/sửa/xoá sản phẩm hiển thị
-// tại /san-pham/ (danh sách) và /san-pham/ten-san-pham/ (chi tiết)
+// [SỬA MỤC 8b - THIEU] Meta Description
+// [SỬA MỤC 12 - THIEU] Open Graph (og:title, og:type, og:url, og:image, og:description)
+// [SỬA MỤC 13 - THIEU] Twitter Card
 // ---------------------------------------------------------------
-function novalink_register_san_pham() {
-    register_post_type( 'san_pham', array(
-        'labels' => array(
-            'name'               => 'Sản phẩm',
-            'singular_name'      => 'Sản phẩm',
-            'add_new'            => 'Thêm sản phẩm',
-            'add_new_item'       => 'Thêm sản phẩm mới',
-            'edit_item'          => 'Sửa sản phẩm',
-            'new_item'           => 'Sản phẩm mới',
-            'view_item'          => 'Xem sản phẩm',
-            'view_items'         => 'Xem sản phẩm',
-            'search_items'       => 'Tìm sản phẩm',
-            'not_found'          => 'Không tìm thấy sản phẩm nào',
-            'not_found_in_trash' => 'Không có sản phẩm nào trong thùng rác',
-            'all_items'          => 'Tất cả sản phẩm',
-            'menu_name'          => 'Sản phẩm',
-            'featured_image'     => 'Ảnh sản phẩm',
-            'set_featured_image' => 'Đặt ảnh sản phẩm',
-        ),
-        'public'        => true,
-        'show_in_menu'  => true,
-        'menu_icon'     => 'dashicons-archive',
-        'menu_position' => 5,
-        'has_archive'   => 'san-pham',
-        'rewrite'       => array( 'slug' => 'san-pham', 'with_front' => false ),
-        'supports'      => array( 'title', 'editor', 'thumbnail', 'excerpt', 'page-attributes' ),
-        'show_in_rest'  => true,
-    ) );
+add_action( 'wp_head', 'novalink_seo_meta_tags', 2 );
+function novalink_seo_meta_tags() {
+    $description = novalink_get_meta_description();
+    $title       = wp_get_document_title();
+    $url         = novalink_get_canonical_url();
+    $og_type     = is_singular( 'post' ) ? 'article' : 'website';
 
-    register_taxonomy( 'danh_muc_sp', 'san_pham', array(
-        'labels' => array(
-            'name'          => 'Danh mục sản phẩm',
-            'singular_name' => 'Danh mục sản phẩm',
-            'search_items'  => 'Tìm danh mục',
-            'all_items'     => 'Tất cả danh mục',
-            'edit_item'     => 'Sửa danh mục',
-            'add_new_item'  => 'Thêm danh mục mới',
-            'menu_name'     => 'Danh mục sản phẩm',
-        ),
-        'hierarchical' => true,
-        'public'       => true,
-        'show_in_rest' => true,
-        'rewrite'      => array( 'slug' => 'danh-muc-san-pham', 'with_front' => false ),
-    ) );
-}
-add_action( 'init', 'novalink_register_san_pham' );
+    $image = '';
+    if ( is_singular() && has_post_thumbnail() ) {
+        $image = get_the_post_thumbnail_url( get_the_ID(), 'large' );
+    }
+    if ( ! $image ) {
+        // Ảnh mặc định khi trang không có ảnh riêng.
+        // Nên thay bằng 1 ảnh đại diện thương hiệu Novalink thật (1200x630px) khi lên domain chính thức.
+        $image = get_stylesheet_directory_uri() . '/screenshot.png';
+    }
 
-// "Migration" nhẹ: tự flush rewrite rules đúng 1 lần sau khi code này lên
-// server, để /san-pham/ hoạt động ngay mà không cần vào Cài đặt > Đường dẫn tĩnh.
-function novalink_maybe_flush_rewrite_for_san_pham() {
-    if ( get_option( 'novalink_san_pham_flushed_v1' ) !== '1' ) {
-        flush_rewrite_rules();
-        update_option( 'novalink_san_pham_flushed_v1', '1' );
-    }
-}
-add_action( 'init', 'novalink_maybe_flush_rewrite_for_san_pham', 20 );
+    echo '<meta name="description" content="' . esc_attr( $description ) . '" />' . "\n";
 
-// ---------------------------------------------------------------
-// Meta box: Thông tin sản phẩm (giá, mô tả ngắn, nổi bật)
-// ---------------------------------------------------------------
-function novalink_sp_add_meta_box() {
-    add_meta_box(
-        'novalink_sp_info',
-        'Thông tin sản phẩm',
-        'novalink_sp_render_meta_box',
-        'san_pham',
-        'normal',
-        'high'
-    );
-}
-add_action( 'add_meta_boxes', 'novalink_sp_add_meta_box' );
+    echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '" />' . "\n";
+    echo '<meta property="og:type" content="' . esc_attr( $og_type ) . '" />' . "\n";
+    echo '<meta property="og:title" content="' . esc_attr( $title ) . '" />' . "\n";
+    echo '<meta property="og:description" content="' . esc_attr( $description ) . '" />' . "\n";
+    echo '<meta property="og:url" content="' . esc_url( $url ) . '" />' . "\n";
+    echo '<meta property="og:image" content="' . esc_url( $image ) . '" />' . "\n";
+    echo '<meta property="og:locale" content="vi_VN" />' . "\n";
 
-function novalink_sp_render_meta_box( $post ) {
-    wp_nonce_field( 'novalink_sp_save', 'novalink_sp_nonce' );
-    $gia     = get_post_meta( $post->ID, '_sp_gia', true );
-    $mo_ta   = get_post_meta( $post->ID, '_sp_mo_ta_ngan', true );
-    $noi_bat = get_post_meta( $post->ID, '_sp_noi_bat', true );
-    ?>
-    <p>
-        <label for="sp_gia"><strong>Giá hiển thị</strong> (vd: 1.200.000đ hoặc "Liên hệ")</label><br>
-        <input type="text" id="sp_gia" name="sp_gia" value="<?php echo esc_attr( $gia ); ?>" style="width:100%;max-width:360px;">
-    </p>
-    <p>
-        <label for="sp_mo_ta_ngan"><strong>Mô tả ngắn</strong> (hiển thị ở danh sách sản phẩm, để trống sẽ lấy từ đoạn trích)</label><br>
-        <textarea id="sp_mo_ta_ngan" name="sp_mo_ta_ngan" rows="3" style="width:100%;max-width:560px;"><?php echo esc_textarea( $mo_ta ); ?></textarea>
-    </p>
-    <p>
-        <label>
-            <input type="checkbox" name="sp_noi_bat" value="1" <?php checked( $noi_bat, '1' ); ?>>
-            <strong>Sản phẩm nổi bật</strong> (hiển thị nhãn "Nổi bật" trên thẻ sản phẩm)
-        </label>
-    </p>
-    <p style="color:#666;">Thứ tự hiển thị: dùng ô <strong>Thứ tự</strong> trong khung "Thuộc tính trang" (Page Attributes) bên phải — số nhỏ hơn hiện trước.</p>
-    <?php
+    echo '<meta name="twitter:card" content="summary_large_image" />' . "\n";
+    echo '<meta name="twitter:title" content="' . esc_attr( $title ) . '" />' . "\n";
+    echo '<meta name="twitter:description" content="' . esc_attr( $description ) . '" />' . "\n";
+    echo '<meta name="twitter:url" content="' . esc_url( $url ) . '" />' . "\n";
+    echo '<meta name="twitter:image" content="' . esc_url( $image ) . '" />' . "\n";
 }
-
-function novalink_sp_save_meta( $post_id ) {
-    if ( ! isset( $_POST['novalink_sp_nonce'] ) || ! wp_verify_nonce( $_POST['novalink_sp_nonce'], 'novalink_sp_save' ) ) {
-        return;
-    }
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-        return;
-    }
-    if ( ! current_user_can( 'edit_post', $post_id ) ) {
-        return;
-    }
-    if ( isset( $_POST['sp_gia'] ) ) {
-        update_post_meta( $post_id, '_sp_gia', sanitize_text_field( wp_unslash( $_POST['sp_gia'] ) ) );
-    }
-    if ( isset( $_POST['sp_mo_ta_ngan'] ) ) {
-        update_post_meta( $post_id, '_sp_mo_ta_ngan', sanitize_textarea_field( wp_unslash( $_POST['sp_mo_ta_ngan'] ) ) );
-    }
-    update_post_meta( $post_id, '_sp_noi_bat', isset( $_POST['sp_noi_bat'] ) ? '1' : '0' );
-}
-add_action( 'save_post_san_pham', 'novalink_sp_save_meta' );
-
-// Trang danh sách / danh mục sản phẩm: sắp theo Thứ tự rồi tới ngày đăng, 12 sản phẩm/trang
-function novalink_sp_archive_query( $query ) {
-    if ( ! is_admin() && $query->is_main_query() && ( is_post_type_archive( 'san_pham' ) || is_tax( 'danh_muc_sp' ) ) ) {
-        $query->set( 'orderby', array( 'menu_order' => 'ASC', 'date' => 'DESC' ) );
-        $query->set( 'posts_per_page', 12 );
-    }
-}
-add_action( 'pre_get_posts', 'novalink_sp_archive_query' );
