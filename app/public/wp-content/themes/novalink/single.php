@@ -48,19 +48,47 @@ $cats = get_the_category();
       if ( $prev_post || $next_post ) :
       ?>
         <nav class="post-nav">
-          <?php if ( $prev_post ) : ?>
+          <?php if ( $prev_post ) :
+            $prev_thumb = get_the_post_thumbnail_url( $prev_post->ID, 'medium' );
+            $prev_cats  = get_the_category( $prev_post->ID );
+          ?>
             <a href="<?php echo esc_url( get_permalink( $prev_post->ID ) ); ?>" class="post-nav-item prev">
-              <span class="nav-label">← Bài viết trước</span>
-              <span class="nav-title"><?php echo esc_html( wp_trim_words( get_the_title( $prev_post->ID ), 8, '…' ) ); ?></span>
+              <span class="nav-arrow">←</span>
+              <span class="nav-thumb">
+                <?php if ( $prev_thumb ) : ?>
+                  <img src="<?php echo esc_url( $prev_thumb ); ?>" alt="">
+                <?php endif; ?>
+              </span>
+              <span class="nav-text">
+                <span class="nav-label">Bài viết trước</span>
+                <span class="nav-title"><?php echo esc_html( wp_trim_words( get_the_title( $prev_post->ID ), 8, '…' ) ); ?></span>
+                <?php if ( ! empty( $prev_cats ) ) : ?>
+                  <span class="nav-cat"><?php echo esc_html( $prev_cats[0]->name ); ?></span>
+                <?php endif; ?>
+              </span>
             </a>
           <?php else : ?>
             <span class="post-nav-item is-empty"></span>
           <?php endif; ?>
 
-          <?php if ( $next_post ) : ?>
+          <?php if ( $next_post ) :
+            $next_thumb = get_the_post_thumbnail_url( $next_post->ID, 'medium' );
+            $next_cats  = get_the_category( $next_post->ID );
+          ?>
             <a href="<?php echo esc_url( get_permalink( $next_post->ID ) ); ?>" class="post-nav-item next">
-              <span class="nav-label">Bài viết kế tiếp →</span>
-              <span class="nav-title"><?php echo esc_html( wp_trim_words( get_the_title( $next_post->ID ), 8, '…' ) ); ?></span>
+              <span class="nav-text">
+                <span class="nav-label">Bài viết kế tiếp</span>
+                <span class="nav-title"><?php echo esc_html( wp_trim_words( get_the_title( $next_post->ID ), 8, '…' ) ); ?></span>
+                <?php if ( ! empty( $next_cats ) ) : ?>
+                  <span class="nav-cat"><?php echo esc_html( $next_cats[0]->name ); ?></span>
+                <?php endif; ?>
+              </span>
+              <span class="nav-thumb">
+                <?php if ( $next_thumb ) : ?>
+                  <img src="<?php echo esc_url( $next_thumb ); ?>" alt="">
+                <?php endif; ?>
+              </span>
+              <span class="nav-arrow">→</span>
             </a>
           <?php else : ?>
             <span class="post-nav-item is-empty"></span>

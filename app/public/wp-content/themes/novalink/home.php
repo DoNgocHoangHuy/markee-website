@@ -13,16 +13,27 @@
 
     <div>
       <?php
-      $paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
+      $paged = ( get_query_var('paged') ) ? (int) get_query_var('paged') : 1;
       $blog_query = new WP_Query( array( 'paged' => $paged, 'posts_per_page' => 5 ) );
 
       if ( $blog_query->have_posts() ) :
           $post_index = 0;
+          // Chỉ trang 1 mới có bài Featured; các trang sau hiện lưới ngay từ đầu.
+          $has_featured = ( $paged === 1 );
+          $grid_opened  = false;
+
+          if ( ! $has_featured ) :
+              // Trang 2 trở đi: mở lưới ngay, không có bài Featured
+              echo '<h3 class="blog-section-title">Bài viết mới nhất</h3>';
+              echo '<div class="posts-grid-2">';
+              $grid_opened = true;
+          endif;
+
           while ( $blog_query->have_posts() ) : $blog_query->the_post();
           $post_index++;
 
           // Bài đầu tiên hiển thị dạng Featured (to)
-          if ( $post_index === 1 && $paged === 1 ) :
+          if ( $post_index === 1 && $has_featured ) :
       ?>
         <article class="featured-post">
           <div class="thumb">
@@ -43,6 +54,7 @@
         <h3 class="blog-section-title">Bài viết mới nhất</h3>
         <div class="posts-grid-2">
       <?php
+          $grid_opened = true;
           else :
       ?>
         <article class="post-card">
@@ -63,9 +75,12 @@
       <?php
           endif;
           endwhile;
-      ?>
-        </div>
 
+          // Chỉ đóng thẻ lưới nếu nó đã thực sự được mở
+          if ( $grid_opened ) {
+              echo '</div>';
+          }
+      ?>
         <div class="pagination">
           <?php
           echo paginate_links( array(
