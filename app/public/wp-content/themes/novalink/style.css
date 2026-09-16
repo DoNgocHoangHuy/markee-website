@@ -484,13 +484,56 @@ p { margin: 0; line-height: 1.7; }
 .pagination a:hover { border-color: var(--red); color: var(--red); }
 
 /* ============ SINGLE POST ============ */
-.single-post-wrap { max-width: 760px; margin: 0 auto; }
-.single-post-wrap .cover { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 26px; background: var(--navy-700); }
+.single-post-wrap {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-card);
+}
+.single-post-wrap .cover { border-radius: var(--radius-md); overflow: hidden; margin-bottom: 26px; background: var(--navy-700); }
 .single-post-wrap .cover img { width: 100%; }
 .single-post-wrap .entry-content { font-size: 15.5px; color: var(--ink); }
 .single-post-wrap .entry-content p { margin-bottom: 18px; color: var(--ink-soft); }
 .single-post-wrap .entry-content h2 { font-size: 22px; margin: 30px 0 14px; }
+.single-post-wrap .entry-content h3 { font-size: 18px; margin: 24px 0 12px; }
+.single-post-wrap .entry-content ul,
+.single-post-wrap .entry-content ol { margin: 0 0 18px; padding-left: 20px; list-style: disc; color: var(--ink-soft); }
+.single-post-wrap .entry-content li { margin-bottom: 8px; }
 .single-post-wrap .entry-content img { border-radius: var(--radius-md); margin: 20px 0; }
+
+/* ---------- Sidebar cố định khi cuộn (sticky) ---------- */
+.sidebar-sticky {
+  position: sticky;
+  /* 74px chiều cao header + 20px thở => sidebar không bị header che khi cuộn */
+  top: 94px;
+  /* Giới hạn chiều cao để sidebar dài vẫn cuộn được nội bộ, không bị cụt */
+  max-height: calc(100vh - 114px);
+  overflow-y: auto;
+  /* Ẩn thanh cuộn cho gọn (vẫn cuộn được) */
+  scrollbar-width: thin;
+}
+.sidebar-sticky::-webkit-scrollbar { width: 5px; }
+.sidebar-sticky::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+
+/* ---------- Điều hướng Bài trước / Bài kế tiếp ---------- */
+.post-nav {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 26px;
+}
+.post-nav-item {
+  display: flex; flex-direction: column; gap: 7px;
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius-md); padding: 18px 20px;
+  transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+.post-nav-item:not(.is-empty):hover {
+  border-color: var(--red); transform: translateY(-2px); box-shadow: var(--shadow-card);
+}
+.post-nav-item.is-empty { background: transparent; border: none; }
+.post-nav-item .nav-label {
+  font-size: 12px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: .04em;
+}
+.post-nav-item .nav-title {
+  font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.45;
+}
+.post-nav-item.next { text-align: right; align-items: flex-end; }
 
 /* ============ SERVICE CATALOG GRID (9 dich vu) ============ */
 .catalog-title {
@@ -650,9 +693,14 @@ p { margin: 0; line-height: 1.7; }
   .card-grid-3, .posts-grid-3, .posts-grid-2, .stats-row, .process-row,
   .service-panel, .form-row { grid-template-columns: repeat(2,1fr); }
   .process-row { grid-template-columns: repeat(3,1fr); }
+  /* Sidebar xuống dưới nội dung -> tắt sticky để không bị kẹt giữa màn hình */
+  .sidebar-sticky { position: static; max-height: none; overflow: visible; }
 }
 @media (max-width: 600px) {
   .card-grid-3, .posts-grid-3, .posts-grid-2, .stats-row,
   .service-panel, .form-row, .process-row { grid-template-columns: 1fr; }
   .home-hero h1 { font-size: 30px; }
+  .post-nav { grid-template-columns: 1fr; }
+  .post-nav-item.next { text-align: left; align-items: flex-start; }
+  .single-post-wrap { padding: 22px 18px; }
 }
