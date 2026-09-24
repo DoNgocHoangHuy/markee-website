@@ -121,7 +121,6 @@
             <?php endif; ?>
           </div>
           <div class="body">
-            <div class="date"><?php echo get_the_date(); ?></div>
             <h4><?php the_title(); ?></h4>
             <a href="<?php the_permalink(); ?>" class="link">Đọc thêm →</a>
           </div>

@@ -43,7 +43,6 @@ $current_cat = get_queried_object();
                 <?php endif; ?>
               </div>
               <div class="body">
-                <div class="date"><?php echo get_the_date(); ?></div>
                 <h4><?php the_title(); ?></h4>
                 <p class="excerpt"><?php echo wp_trim_words( get_the_excerpt(), 16 ); ?></p>
                 <a href="<?php the_permalink(); ?>" class="link">Đọc thêm →</a>
@@ -97,7 +96,7 @@ $current_cat = get_queried_object();
             <?php if ( has_post_thumbnail() ) : the_post_thumbnail(); else : ?>
               <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=120&q=80" alt="">
             <?php endif; ?>
-            <div><h6><?php the_title(); ?></h6><div class="date"><?php echo get_the_date(); ?></div></div>
+            <div><h6><?php the_title(); ?></h6></div>
           </a>
         <?php
             endwhile; wp_reset_postdata();

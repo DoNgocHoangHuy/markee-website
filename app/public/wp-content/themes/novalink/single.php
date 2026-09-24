@@ -21,7 +21,7 @@ $cats = get_the_category();
     </div>
     <h1 style="font-size:26px;"><?php the_title(); ?></h1>
     <p style="font-size:13.5px;margin-top:10px;">
-      <?php echo get_the_date(); ?> · <?php the_author(); ?>
+      <?php the_author(); ?>
     </p>
   </div>
 </section>
@@ -148,7 +148,7 @@ $cats = get_the_category();
               <?php if ( has_post_thumbnail() ) : the_post_thumbnail(); else : ?>
                 <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=120&q=80" alt="">
               <?php endif; ?>
-              <div><h6><?php echo esc_html( wp_trim_words( get_the_title(), 10, '…' ) ); ?></h6><div class="date"><?php echo get_the_date(); ?></div></div>
+              <div><h6><?php echo esc_html( wp_trim_words( get_the_title(), 10, '…' ) ); ?></h6></div>
             </a>
           <?php
               endwhile; wp_reset_postdata();

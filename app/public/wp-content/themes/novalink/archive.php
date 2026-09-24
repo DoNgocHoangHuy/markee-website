@@ -33,7 +33,6 @@ get_header();
                 <?php endif; ?>
               </div>
               <div class="body">
-                <div class="date"><?php echo get_the_date(); ?></div>
                 <h4><?php the_title(); ?></h4>
                 <p class="excerpt"><?php echo wp_trim_words( get_the_excerpt(), 16 ); ?></p>
                 <a href="<?php the_permalink(); ?>" class="link">Đọc thêm →</a>

@@ -45,7 +45,6 @@
             <?php $cats = get_the_category(); if ( ! empty( $cats ) ) : ?>
               <span class="tag"><?php echo esc_html( $cats[0]->name ); ?></span>
             <?php endif; ?>
-            <span class="date"><?php echo get_the_date(); ?></span>
             <h2><?php the_title(); ?></h2>
             <p><?php echo wp_trim_words( get_the_excerpt(), 24 ); ?></p>
             <div class="author"><span class="avatar"></span> <?php the_author(); ?></div>
@@ -67,7 +66,6 @@
             <?php endif; ?>
           </div>
           <div class="body">
-            <div class="date"><?php echo get_the_date(); ?></div>
             <h4><?php the_title(); ?></h4>
             <a href="<?php the_permalink(); ?>" class="link">Đọc thêm →</a>
           </div>
@@ -130,7 +128,7 @@
             <?php if ( has_post_thumbnail() ) : the_post_thumbnail(); else : ?>
               <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=120&q=80" alt="">
             <?php endif; ?>
-            <div><h6><?php the_title(); ?></h6><div class="date"><?php echo get_the_date(); ?></div></div>
+            <div><h6><?php the_title(); ?></h6></div>
           </a>
         <?php
             endwhile; wp_reset_postdata();
