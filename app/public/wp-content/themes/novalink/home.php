@@ -13,10 +13,10 @@
 
     <div>
       <?php
+      global $wp_query;
       $paged = ( get_query_var('paged') ) ? (int) get_query_var('paged') : 1;
-      $blog_query = new WP_Query( array( 'paged' => $paged, 'posts_per_page' => 5 ) );
 
-      if ( $blog_query->have_posts() ) :
+      if ( have_posts() ) :
           $post_index = 0;
           // Chỉ trang 1 mới có bài Featured; các trang sau hiện lưới ngay từ đầu.
           $has_featured = ( $paged === 1 );
@@ -29,7 +29,7 @@
               $grid_opened = true;
           endif;
 
-          while ( $blog_query->have_posts() ) : $blog_query->the_post();
+          while ( have_posts() ) : the_post();
           $post_index++;
 
           // Bài đầu tiên hiển thị dạng Featured (to)
@@ -82,7 +82,7 @@
         <div class="pagination">
           <?php
           echo paginate_links( array(
-              'total'   => $blog_query->max_num_pages,
+              'total'   => $wp_query->max_num_pages,
               'current' => $paged,
               'prev_text' => '‹',
               'next_text' => '›',
@@ -90,7 +90,6 @@
           ?>
         </div>
       <?php
-          wp_reset_postdata();
       else :
       ?>
         <p style="color:var(--ink-soft);">Chưa có bài viết nào. Vào <strong>Bài viết → Thêm mới</strong> để đăng bài đầu tiên.</p>

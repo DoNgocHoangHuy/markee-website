@@ -29,6 +29,15 @@ function novalink_excerpt_length( $length ) {
 }
 add_filter( 'excerpt_length', 'novalink_excerpt_length' );
 
+// Trang Blog (posts page) hiển thị 5 bài/trang trong home.php — đặt cùng số lượng
+// cho main query để WordPress không tạo link phân trang vượt quá số trang thực có bài.
+function novalink_blog_posts_per_page( $query ) {
+    if ( ! is_admin() && $query->is_main_query() && is_home() ) {
+        $query->set( 'posts_per_page', 5 );
+    }
+}
+add_action( 'pre_get_posts', 'novalink_blog_posts_per_page' );
+
 // Register Blog categories used on Home (Marketing / Cong nghe & Media / Tin tuc tong hop)
 function novalink_register_default_categories() {
     $cats = array( 'Marketing', 'Công nghệ & Media', 'Tin tức tổng hợp' );
