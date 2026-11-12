@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 const SAYBENCODE_META_TITLE = '_sb_seo_title';
 const SAYBENCODE_META_DESC  = '_sb_seo_desc';
+const SAYBENCODE_META_KW    = '_sb_seo_kw';
 
 /** Các loại nội dung có ô SEO. */
 function saybencode_seo_post_types() {
@@ -22,7 +23,7 @@ function saybencode_seo_post_types() {
 /* ---------- Đăng ký meta (để Gutenberg đọc/ghi qua REST) ---------- */
 add_action( 'init', function () {
     foreach ( saybencode_seo_post_types() as $pt ) {
-        foreach ( array( SAYBENCODE_META_TITLE => 'sanitize_text_field', SAYBENCODE_META_DESC => 'sanitize_textarea_field' ) as $key => $cb ) {
+        foreach ( array( SAYBENCODE_META_TITLE => 'sanitize_text_field', SAYBENCODE_META_DESC => 'sanitize_textarea_field', SAYBENCODE_META_KW => 'sanitize_text_field' ) as $key => $cb ) {
             register_post_meta( $pt, $key, array(
                 'type'              => 'string',
                 'single'            => true,
@@ -52,6 +53,7 @@ add_action( 'enqueue_block_editor_assets', function () {
         'host'   => wp_parse_url( home_url(), PHP_URL_HOST ),
         'titleK' => SAYBENCODE_META_TITLE,
         'descK'  => SAYBENCODE_META_DESC,
+        'kwK'    => SAYBENCODE_META_KW,
     ) );
 } );
 
@@ -67,6 +69,9 @@ function saybencode_seo_metabox( $post ) {
     wp_nonce_field( 'saybencode_seo_meta', 'saybencode_seo_nonce' );
     $t = get_post_meta( $post->ID, SAYBENCODE_META_TITLE, true );
     $d = get_post_meta( $post->ID, SAYBENCODE_META_DESC, true );
+    $k = get_post_meta( $post->ID, SAYBENCODE_META_KW, true );
+    echo '<p><label for="sb_seo_kw"><strong>Từ khóa chính</strong> <span class="description">(1 cụm từ; nên có trong tiêu đề, mô tả, slug và đoạn đầu bài)</span></label>';
+    echo '<input type="text" id="sb_seo_kw" name="sb_seo_kw" value="' . esc_attr( $k ) . '" style="width:100%" maxlength="120"></p>';
     echo '<p><label for="sb_seo_title"><strong>Tiêu đề SEO</strong> <span class="description">(nên ≤ 60 ký tự; để trống sẽ dùng tiêu đề bài)</span></label>';
     echo '<input type="text" id="sb_seo_title" name="sb_seo_title" value="' . esc_attr( $t ) . '" style="width:100%" maxlength="120"></p>';
     echo '<p><label for="sb_seo_desc"><strong>Mô tả meta (Meta Description)</strong> <span class="description">(nên 120–160 ký tự; để trống sẽ lấy từ phần trích dẫn)</span></label>';
@@ -77,6 +82,7 @@ add_action( 'save_post', function ( $post_id ) {
     if ( ! isset( $_POST['saybencode_seo_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['saybencode_seo_nonce'] ) ), 'saybencode_seo_meta' ) ) return;
     if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! current_user_can( 'edit_post', $post_id ) ) return;
     if ( isset( $_POST['sb_seo_title'] ) ) update_post_meta( $post_id, SAYBENCODE_META_TITLE, sanitize_text_field( wp_unslash( $_POST['sb_seo_title'] ) ) );
+    if ( isset( $_POST['sb_seo_kw'] ) )    update_post_meta( $post_id, SAYBENCODE_META_KW, sanitize_text_field( wp_unslash( $_POST['sb_seo_kw'] ) ) );
     if ( isset( $_POST['sb_seo_desc'] ) )  update_post_meta( $post_id, SAYBENCODE_META_DESC, sanitize_textarea_field( wp_unslash( $_POST['sb_seo_desc'] ) ) );
 } );
 
