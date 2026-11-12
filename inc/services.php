@@ -23,7 +23,7 @@ function saybencode_register_service_cpt() {
         'menu_icon'    => 'dashicons-megaphone',
         'menu_position'=> 21,
         'show_in_rest' => true,
-        'supports'     => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' ),
+        'supports'     => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'custom-fields' ),
     ) );
 }
 add_action( 'init', 'saybencode_register_service_cpt' );

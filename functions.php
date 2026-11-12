@@ -162,8 +162,10 @@ require_once get_stylesheet_directory() . '/inc/icons.php';
 require_once get_stylesheet_directory() . '/inc/services.php';
 require_once get_stylesheet_directory() . '/inc/elementor.php';
 require_once get_stylesheet_directory() . '/inc/seo.php';
+require_once get_stylesheet_directory() . '/inc/seo-fields.php';
 require_once get_stylesheet_directory() . '/inc/contact-form.php';
 require_once get_stylesheet_directory() . '/inc/blog-content.php';
+require_once get_stylesheet_directory() . '/inc/blog-seed.php';
 
 /** URL trang Blog (/blog/). */
 function saybencode_blog_url() {
